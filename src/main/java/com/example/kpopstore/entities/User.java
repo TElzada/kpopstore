@@ -12,7 +12,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(unique = true)
     private String username;
+
+    @Column(unique = true)
     private String email;
     private String password;
 
@@ -79,7 +82,10 @@ public class User {
     public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
-
+    public void addOrder(Order order) {
+        this.orders.add(order);
+        order.setUser(this);  // Установить пользователя для заказа
+    }
     public enum Role {
         USER, ADMIN
     }
