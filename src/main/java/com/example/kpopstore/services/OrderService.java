@@ -4,6 +4,7 @@ import com.example.kpopstore.entities.Order;
 import com.example.kpopstore.entities.Order.OrderStatus;
 import com.example.kpopstore.entities.OrderItem;
 import com.example.kpopstore.repositories.OrderRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,11 @@ public class OrderService {
     }
 
 
-    public Optional<Order> getOrderById(UUID orderId) {
-        return orderRepository.findById(orderId);
+    public Order getOrderById(UUID orderId) {
+
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+
+        return orderOpt.orElseThrow(() -> new RuntimeException("Order not found with id " + orderId));
     }
 
 
@@ -70,6 +74,38 @@ public class OrderService {
             return orderRepository.save(order);
         }
         throw new RuntimeException("Order not found with ID: " + orderId);
+    }
+
+    @Transactional
+    public Order updateOrder(UUID orderId, Order updatedOrder) {
+
+        Optional<Order> existingOrderOpt = orderRepository.findById(orderId);
+        if (existingOrderOpt.isPresent()) {
+            Order existingOrder = existingOrderOpt.get();
+
+
+            existingOrder.setStatus(updatedOrder.getStatus());
+            existingOrder.setTotalPrice(updatedOrder.getTotalPrice());
+            existingOrder.setUpdatedAt(updatedOrder.getUpdatedAt());
+            existingOrder.setItems(updatedOrder.getItems());
+
+            return orderRepository.save(existingOrder);
+        } else {
+
+            throw new RuntimeException("Order not found with id " + orderId);
+        }
+    }
+    @Transactional
+    public void deleteOrder(UUID orderId) {
+
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isPresent()) {
+
+            orderRepository.deleteById(orderId);
+        } else {
+
+            throw new RuntimeException("Order not found with id " + orderId);
+        }
     }
 }
 

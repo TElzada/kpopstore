@@ -27,7 +27,7 @@ public class OrderItemService {
     }
 
 
-    public List<OrderItem> getOrderItemsByOrderId(UUID orderId) {
+    public List<OrderItem> getOrderItemsById(UUID orderId) {
         return orderItemRepository.findAll().stream()
                 .filter(item -> item.getOrder().getId().equals(orderId))
                 .toList();
@@ -50,5 +50,16 @@ public class OrderItemService {
             throw new RuntimeException("OrderItem not found with ID: " + orderItemId);
         }
     }
+
+    public OrderItem createOrderItem(OrderItem orderItem) {
+        return orderItemRepository.save(orderItem);
+    }
+
+
+    public OrderItem getOrderItemById(UUID orderItemId) {
+        Optional<OrderItem> orderItemOpt = orderItemRepository.findById(orderItemId);
+        return orderItemOpt.orElseThrow(() -> new RuntimeException("OrderItem not found with id " + orderItemId));
+    }
+
 }
 

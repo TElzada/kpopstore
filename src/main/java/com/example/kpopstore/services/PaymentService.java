@@ -51,5 +51,14 @@ public class PaymentService {
     public Payment getPaymentByOrder(Order order) {
         return paymentRepository.findByOrder(order).orElseThrow(() -> new RuntimeException("No payment found for order: " + order.getId()));
     }
+
+    public void deletePayment(UUID paymentId) {
+        Optional<Payment> paymentOptional = paymentRepository.findById(paymentId);
+        if (paymentOptional.isPresent()) {
+            paymentRepository.delete(paymentOptional.get());
+        } else {
+            throw new RuntimeException("Payment not found with ID: " + paymentId);
+        }
+    }
 }
 
