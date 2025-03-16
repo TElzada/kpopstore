@@ -26,12 +26,12 @@ class PaymentRepositoryTest {
 
     @Test
     void testSaveAndFindPayment() {
-        // Создаем заказ для теста
+
         Order order = new Order(new User("impala67", "dean.winchester@gmail.com", "password123", Role.USER),
                 List.of(), BigDecimal.valueOf(41.98), OrderStatus.PENDING, LocalDateTime.now(), LocalDateTime.now());
         order = orderRepository.save(order);
 
-        // Создаем Payment
+
         Payment payment = new Payment(order, PaymentMethod.CARD, PaymentStatus.COMPLETED, "12345TX");
         payment = paymentRepository.save(payment);
 

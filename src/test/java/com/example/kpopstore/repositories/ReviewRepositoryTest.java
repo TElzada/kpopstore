@@ -26,16 +26,16 @@ class ReviewRepositoryTest {
 
     @Test
     void testSaveAndFindReview() {
-        // Создаем пользователя
+
         User user = new User("impala67", "dean.winchesterdoe@gmail.com", "password123", Role.USER);
         user = userRepository.save(user);
 
-        // Создаем альбом
+
         Album album = new Album("Wings", "BTS", LocalDate.of(2016, 10, 10),
                 BigDecimal.valueOf(20.99), 100, "2nd FULL-LENGTH ALBUM", "cover1.jpg");
         album = albumRepository.save(album);
 
-        // Создаем обзор
+
         Review review = new Review("Amazing album!", 5, LocalDateTime.now(), album, user);
         review = reviewRepository.save(review);
 
