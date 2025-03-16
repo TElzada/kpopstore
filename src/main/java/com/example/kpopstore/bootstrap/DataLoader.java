@@ -9,10 +9,15 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import com.example.kpopstore.entities.Order.OrderStatus;
+import com.example.kpopstore.entities.Payment.PaymentMethod;
+import com.example.kpopstore.entities.Payment.PaymentStatus;
+import com.example.kpopstore.entities.User.Role;
 
 @Component
-public class DataBootstrap implements CommandLineRunner {
+public class DataLoader implements CommandLineRunner {
 
     @Autowired
     private AlbumRepository albumRepository;
@@ -43,8 +48,8 @@ public class DataBootstrap implements CommandLineRunner {
         userRepository.saveAll(List.of(user1, user2));
 
 
-        Order order1 = new Order(user1, BigDecimal.valueOf(41.98), OrderStatus.PENDING);
-        Order order2 = new Order(user2, BigDecimal.valueOf(25.99), OrderStatus.PAID);
+        Order order1 = new Order(user1,new ArrayList<>(), BigDecimal.valueOf(41.98), OrderStatus.PENDING,LocalDateTime.of(2025, 2, 27, 12, 59), LocalDateTime.of(2025,2,27,13, 30));
+        Order order2 = new Order(user1,new ArrayList<>(), BigDecimal.valueOf(20.98), OrderStatus.PAID,LocalDateTime.of(2024, 7, 4, 13, 2), LocalDateTime.of(2024,7,4,13, 10));
         orderRepository.saveAll(List.of(order1, order2));
 
 
