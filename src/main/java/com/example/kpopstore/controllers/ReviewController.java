@@ -11,8 +11,10 @@ import com.example.kpopstore.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,11 +50,16 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<Review> createReview(
+    public ResponseEntity<?> createReview(
             @RequestParam String comment,
             @RequestParam int rating,
             @RequestParam UUID albumId,
             @RequestParam UUID userId) {
+
+        if (rating < 1 || rating > 5) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rating must be between 1 and 5.");
+        }
+
         try {
             Album album = albumService.getAlbumById(albumId);
             User user = userService.getUserById(userId);
@@ -60,7 +67,7 @@ public class ReviewController {
             Review createdReview = reviewService.createReview(comment, rating, album, user);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
         } catch (InvalidReviewException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid review details.");
         }
     }
 
@@ -69,13 +76,18 @@ public class ReviewController {
             @PathVariable UUID reviewId,
             @RequestParam String comment,
             @RequestParam int rating) {
+
+        if (rating < 1 || rating > 5) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rating must be between 1 and 5.");
+        }
+
         try {
             Review updatedReview = reviewService.updateReview(reviewId, comment, rating);
             return ResponseEntity.ok(updatedReview);
         } catch (ReviewNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (InvalidReviewException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid review details.");
         }
     }
 

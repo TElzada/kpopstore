@@ -1,6 +1,8 @@
 package com.example.kpopstore.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,14 +17,18 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull(message = "User cannot be null")
     private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items;
 
+    @NotNull(message = "Total price cannot be null")
+    @Min(value = 0, message = "Total price must be greater than or equal to zero")
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Order status cannot be null")
     private OrderStatus status;
 
     private LocalDateTime createdAt;
@@ -96,10 +102,7 @@ public class Order {
         this.updatedAt = updatedAt;
     }
 
-
-
     public enum OrderStatus {
         PENDING, PAID, SHIPPED, DELIVERED
     }
 }
-

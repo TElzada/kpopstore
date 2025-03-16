@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -34,10 +35,14 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<Payment> createPayment(
+    public ResponseEntity<?> createPayment(
             @RequestParam UUID orderId,
             @RequestParam String transactionId,
             @RequestParam Payment.PaymentMethod paymentMethod) {
+
+        if (orderId == null || transactionId == null || paymentMethod == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("All parameters are required.");
+        }
 
         try {
             Order order = new Order();
@@ -46,7 +51,7 @@ public class PaymentController {
             Payment createdPayment = paymentService.createPayment(order, transactionId, paymentMethod);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPayment);
         } catch (InvalidPaymentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid payment details.");
         }
     }
 

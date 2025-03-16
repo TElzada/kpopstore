@@ -7,8 +7,11 @@ import com.example.kpopstore.services.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,24 +43,40 @@ public class AlbumController {
     }
 
     @PostMapping
-    public ResponseEntity<Album> createAlbum(@RequestBody Album album) {
+    public ResponseEntity<?> createAlbum(@Valid @RequestBody Album album, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMessages = new StringBuilder();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errorMessages.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("\n");
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages.toString());
+        }
+
         try {
             Album createdAlbum = albumService.createAlbum(album);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdAlbum);
         } catch (InvalidAlbumException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid album data");
         }
     }
 
     @PutMapping("/{albumId}")
-    public ResponseEntity<Album> updateAlbum(@PathVariable UUID albumId, @RequestBody Album album) {
+    public ResponseEntity<?> updateAlbum(@PathVariable UUID albumId, @Valid @RequestBody Album album, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMessages = new StringBuilder();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errorMessages.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("\n");
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages.toString());
+        }
+
         try {
             Album updatedAlbum = albumService.updateAlbum(albumId, album);
             return ResponseEntity.ok(updatedAlbum);
         } catch (AlbumNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (InvalidAlbumException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid album data");
         }
     }
 

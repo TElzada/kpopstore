@@ -7,8 +7,11 @@ import com.example.kpopstore.services.OrderItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -33,12 +36,20 @@ public class OrderItemController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderItem> createOrderItem(@RequestBody OrderItem orderItem) {
+    public ResponseEntity<?> createOrderItem(@Valid @RequestBody OrderItem orderItem, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMessages = new StringBuilder();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errorMessages.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("\n");
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages.toString());
+        }
+
         try {
             OrderItem createdOrderItem = orderItemService.createOrderItem(orderItem);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdOrderItem);
         } catch (InvalidOrderItemException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order item data");
         }
     }
 

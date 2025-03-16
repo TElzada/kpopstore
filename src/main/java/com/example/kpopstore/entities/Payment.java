@@ -1,6 +1,8 @@
 package com.example.kpopstore.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
 @Entity
@@ -12,14 +14,19 @@ public class Payment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
+    @NotNull(message = "Order cannot be null")
     private Order order;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Payment method cannot be null")
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Payment status cannot be null")
     private PaymentStatus status;
 
+    @NotNull(message = "Transaction ID cannot be null")
+    @Size(min = 1, max = 255, message = "Transaction ID must be between 1 and 255 characters")
     private String transactionId;
 
     public Payment() {}
@@ -80,4 +87,3 @@ public class Payment {
         PENDING, COMPLETED, FAILED
     }
 }
-
