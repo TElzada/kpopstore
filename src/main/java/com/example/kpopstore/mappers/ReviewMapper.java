@@ -39,13 +39,13 @@ public class ReviewMapper {
         }
 
 
-        User user = userService.findById(reviewDTO.getUserId());
+        User user = userService.getUserById(reviewDTO.getUserId());
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
 
-        Album album = albumService.findById(reviewDTO.getAlbumId());
+        Album album = albumService.getAlbumById(reviewDTO.getAlbumId());
         if (album == null) {
             throw new RuntimeException("Album not found");
         }

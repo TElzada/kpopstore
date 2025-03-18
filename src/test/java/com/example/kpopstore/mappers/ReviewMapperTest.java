@@ -4,7 +4,12 @@ import com.example.kpopstore.DTO.ReviewDTO;
 import com.example.kpopstore.entities.Album;
 import com.example.kpopstore.entities.Review;
 import com.example.kpopstore.entities.User;
+import com.example.kpopstore.services.AlbumService;
+import com.example.kpopstore.services.UserService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
@@ -24,12 +29,17 @@ class ReviewMapperTest {
         assertEquals(review.getRating(), reviewDTO.getRating());
         assertEquals(review.getComment(), reviewDTO.getComment());
     }
+    @Mock
+    private UserService userService;  // Заглушка для UserService
 
+    @Mock
+    private AlbumService albumService;
     @Test
     void testToEntity() {
-        Long reviewId = 1L;
-        Long albumId = 2L;
-        Long userId = 3L;
+        MockitoAnnotations.openMocks(this);
+        UUID reviewId = UUID.randomUUID();
+        UUID albumId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
 
         ReviewDTO reviewDTO = new ReviewDTO(reviewId, "Great album!", 5, LocalDateTime.now(), albumId, userId);
         ReviewMapper reviewMapper = new ReviewMapper(userService, albumService);

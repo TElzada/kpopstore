@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,24 +72,25 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewId}")
-    public ResponseEntity<Review> updateReview(
+    public ResponseEntity<?> updateReview(
             @PathVariable UUID reviewId,
             @RequestParam String comment,
             @RequestParam int rating) {
 
         if (rating < 1 || rating > 5) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rating must be between 1 and 5.");
+            return ResponseEntity.badRequest().body("Rating must be between 1 and 5.");
         }
 
         try {
             Review updatedReview = reviewService.updateReview(reviewId, comment, rating);
             return ResponseEntity.ok(updatedReview);
         } catch (ReviewNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Review not found.");
         } catch (InvalidReviewException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid review details.");
+            return ResponseEntity.badRequest().body("Invalid review details.");
         }
     }
+
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable UUID reviewId) {

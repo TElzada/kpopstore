@@ -1,16 +1,17 @@
 package com.example.kpopstore.DTO;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ReviewDTO {
-    private Long id;
+    private UUID id;
     private String comment;
     private int rating;
     private LocalDateTime date;
-    private Long albumId; //
-    private Long userId;
+    private UUID albumId; //
+    private UUID userId;
 
-    public ReviewDTO(Long id, String comment, int rating, LocalDateTime date, Long albumId, Long userId) {
+    public ReviewDTO(UUID id, String comment, int rating, LocalDateTime date, UUID albumId, UUID userId) {
         this.id = id;
         this.comment = comment;
         this.rating = rating;
@@ -19,11 +20,11 @@ public class ReviewDTO {
         this.userId = userId;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -51,19 +52,19 @@ public class ReviewDTO {
         this.date = date;
     }
 
-    public Long getAlbumId() {
+    public UUID getAlbumId() {
         return albumId;
     }
 
-    public void setAlbumId(Long albumId) {
+    public void setAlbumId(UUID albumId) {
         this.albumId = albumId;
     }
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 }

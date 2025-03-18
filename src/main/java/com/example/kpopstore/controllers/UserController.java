@@ -11,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(
+    public ResponseEntity<?> updateUser(
             @PathVariable UUID userId,
             @Valid @RequestBody User user,
             BindingResult result) {
@@ -74,7 +74,7 @@ public class UserController {
             for (FieldError error : result.getFieldErrors()) {
                 errorMessages.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ");
             }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages.toString());
         }
 
         try {
