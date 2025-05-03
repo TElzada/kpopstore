@@ -29,17 +29,21 @@ public class AlbumControllerValidationTest {
 
     @Test
     public void shouldReturn400WhenAlbumValidationFails() throws Exception {
-        Album invalidAlbum = new Album("", "", "", null, null);
+        Album invalidAlbum = new Album("", "", null, null, 0, null, null);
 
         when(albumService.createAlbum(invalidAlbum)).thenReturn(invalidAlbum);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/albums")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"\",\"artist\":\"\",\"releaseDate\":\"\",\"price\":null}"))
+                        .content("{\"title\":\"\",\"artist\":\"\",\"releaseDate\":null,\"price\":null,\"stock\":0,\"description\":null,\"coverImage\":null}"))
                 .andExpect(status().isBadRequest())  // Ожидаем статус 400
                 .andExpect(jsonPath("$.validationErrors.title").value("Title is required"))
                 .andExpect(jsonPath("$.validationErrors.artist").value("Artist is required"))
                 .andExpect(jsonPath("$.validationErrors.releaseDate").value("Release date is required"))
-                .andExpect(jsonPath("$.validationErrors.price").value("Price is required"));
+                .andExpect(jsonPath("$.validationErrors.price").value("Price is required"))
+                .andExpect(jsonPath("$.validationErrors.stock").value("Stock is required"))
+                .andExpect(jsonPath("$.validationErrors.description").value("Description is required"))
+                .andExpect(jsonPath("$.validationErrors.coverImage").value("Cover image is required"));
     }
+
 }
