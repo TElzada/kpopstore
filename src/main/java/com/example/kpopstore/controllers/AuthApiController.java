@@ -1,11 +1,13 @@
 package com.example.kpopstore.controllers;
 
 import com.example.kpopstore.DTO.LoginRequest;
+import com.example.kpopstore.DTO.RegisterRequest;
 import com.example.kpopstore.DTO.TokenResponse;
 import com.example.kpopstore.entities.User;
 import com.example.kpopstore.repositories.UserRepository;
 import com.example.kpopstore.security.jwt.JwtUtils;
 import com.example.kpopstore.services.RefreshTokenService;
+import com.example.kpopstore.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
@@ -21,6 +23,7 @@ public class AuthApiController {
     @Autowired private JwtUtils jwtUtils;
     @Autowired private UserRepository userRepository;
     @Autowired private RefreshTokenService refreshTokenService;
+    @Autowired private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
@@ -40,5 +43,14 @@ public class AuthApiController {
         return ResponseEntity.ok(new TokenResponse(accessToken, refreshToken));
     }
 
-}
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+        try {
+            User user = userService.registerUser(registerRequest);
 
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+}

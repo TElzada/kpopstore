@@ -44,7 +44,7 @@ public class User {
         this.role = role;
     }
 
-    // Getters and Setters
+
     public UUID getId() {
         return id;
     }
@@ -95,7 +95,7 @@ public class User {
 
     public void addOrder(Order order) {
         this.orders.add(order);
-        order.setUser(this);  // Установить пользователя для заказа
+        order.setUser(this);
     }
 
     public enum Role {

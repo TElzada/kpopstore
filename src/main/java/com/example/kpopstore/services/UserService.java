@@ -4,8 +4,8 @@ import com.example.kpopstore.entities.User;
 import com.example.kpopstore.entities.User.Role;
 import com.example.kpopstore.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +15,13 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
     public User getUserById(UUID userId) {
         Optional<User> user = userRepository.findById(userId);
@@ -37,7 +38,30 @@ public class UserService {
     }
 
     public User createUser(String username, String email, String password, Role role) {
-        User newUser = new User(username, email, password, role);
+        if (userRepository.existsByUsername(username)) {
+            throw new RuntimeException("Username is already taken");
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email is already in use");
+        }
+
+        String hashedPassword = passwordEncoder.encode(password);
+
+        User newUser = new User(username, email, hashedPassword, role);
+        return userRepository.save(newUser);
+    }
+
+    public User registerUser(String username, String email, String password) {
+        if (userRepository.existsByUsername(username)) {
+            throw new RuntimeException("Username is already taken");
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email is already in use");
+        }
+
+        String hashedPassword = passwordEncoder.encode(password);
+
+        User newUser = new User(username, email, hashedPassword, Role.USER);
         return userRepository.save(newUser);
     }
 
@@ -66,4 +90,3 @@ public class UserService {
         return userRepository.findAll();
     }
 }
-
