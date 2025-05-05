@@ -94,3 +94,39 @@ The backend uses **JWT (JSON Web Tokens)** for authenticating and authorizing us
 * All other routes require a valid JWT access token.
 * Passwords are securely hashed using `BCryptPasswordEncoder`.
 * Stateless session management is enforced using `SessionCreationPolicy.STATELESS`.
+
+### Security Setup
+The security is configured using Spring Security. Key aspects of the setup include:
+
+- Stateless authentication using JWT.
+- Endpoints like `/auth/**` and `/oauth2/**` are publicly accessible.
+- All other endpoints require a valid access token in the `Authorization` header (`Bearer <token>`).
+- User passwords are hashed using BCrypt before storing in the database.
+- OAuth2 login is configured using Spring Security’s built-in support and customized through `CustomOAuth2UserService`.
+
+### How to Test Authentication
+Although this project does not include manual SwaggerUI or Postman tests in the submission, here’s how authentication can be tested:
+
+1. **Register a user**:
+   - `POST /auth/register` with JSON body:
+     ```json
+     {
+       "username": "testuser",
+       "email": "test@example.com",
+       "password": "securepassword"
+     }
+     ```
+
+2. **Log in**:
+   - `POST /auth/login` with the registered username/password.
+   - You'll receive an `accessToken` and `refreshToken`.
+
+3. **Access a protected endpoint**:
+   - Make a `GET` request to a protected route (e.g. `/orders`) with header:
+     ```
+     Authorization: Bearer <accessToken>
+     ```
+
+4. **Use refresh token** (future implementation):
+   - `POST /auth/refresh` with the refresh token to receive a new access token.
+
